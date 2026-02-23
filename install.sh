@@ -13,6 +13,7 @@
 # =============================================================
 
 set -e  # Exit immediately on any error
+trap 'echo ""; echo "❌ ERROR: install.sh failed on line $LINENO. Your Cloud Office is incomplete!"' ERR
 
 echo ""
 echo "============================================"
@@ -29,12 +30,14 @@ curl -fsSL https://claude.ai/install.sh | bash
 echo ""
 echo "→ [2/3] Configuring .bashrc.d loader..."
 
-BASHRC_D_LOADER='if [ -d ~/.bashrc.d ]; then for file in ~/.bashrc.d/*.sh; do . "$file"; done; fi'
+# DOTFILES_LOADER tag = unique guard. grep targets the tag, not the folder name.
+# WHY: searching for ".bashrc.d" would false-positive on any comment containing it.
+BASHRC_D_LOADER='if [ -d ~/.bashrc.d ]; then for file in ~/.bashrc.d/*.sh; do . "$file"; done; fi # DOTFILES_LOADER'
 
-if ! grep -qF ".bashrc.d" ~/.bashrc 2>/dev/null; then
-    echo ""                                          >> ~/.bashrc
+if ! grep -qF "DOTFILES_LOADER" ~/.bashrc 2>/dev/null; then
+    echo ""                                              >> ~/.bashrc
     echo "# Load .bashrc.d modules (added by dotfiles)" >> ~/.bashrc
-    echo "$BASHRC_D_LOADER"                         >> ~/.bashrc
+    echo "$BASHRC_D_LOADER"                             >> ~/.bashrc
     echo "  ✓ Loader added to ~/.bashrc"
 else
     echo "  ✓ Loader already present — skipping"
