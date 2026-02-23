@@ -13,8 +13,11 @@ Automatically configures every GitHub Codespace with Claude Code and a modular s
 
 1. **GitHub Codespace starts** → GitHub detects this dotfiles repo → runs `install.sh`
 2. **`install.sh`** installs Claude Code and sets up the `.bashrc.d` loader
-3. **GitHub Codespaces Secret** (`ANTHROPIC_API_KEY`) is injected automatically — no key in code
+3. **Type `claude auth login`** once → browser opens → authenticate with your Claude.ai Pro account
 4. **Type `claude`** — ready to work
+
+> No API key needed. Authentication uses your Claude.ai Pro subscription via OAuth.
+> Credentials are stored locally in `~/.claude/.credentials.json` — never in code.
 
 ## Adding new tools
 
@@ -27,8 +30,8 @@ Re-run `install.sh` to activate. No other changes needed.
 
 ## Manual setup (one-time, GitHub UI)
 
-1. **GitHub Settings → Codespaces → Secrets** → add `ANTHROPIC_API_KEY`
-2. **GitHub Settings → Codespaces → Dotfiles** → enable + select this repo
+1. **GitHub Settings → Codespaces → Dotfiles** → enable + select this repo
+2. **In every new Codespace:** run `claude auth login` once → authenticate via browser
 
 ## Architecture
 
