@@ -13,7 +13,9 @@
 # =============================================================
 
 set -e  # Exit immediately on any error
-trap 'echo ""; echo "❌ ERROR: install.sh failed on line $LINENO. Your Cloud Office is incomplete!"' ERR
+# WHY two traps: the echo trap gives a visible message in creation logs,
+# the file trap surfaces the failure in every future shell session via claude.sh
+trap 'echo ""; echo "❌ ERROR: install.sh failed on line $LINENO. Your Cloud Office is incomplete!"; echo "FAILED" > ~/.claude_install_failed' ERR
 
 echo ""
 echo "============================================"
@@ -35,6 +37,9 @@ echo "→ [2/3] Configuring .bashrc.d loader..."
 BASHRC_D_LOADER='if [ -d ~/.bashrc.d ]; then for file in ~/.bashrc.d/*.sh; do . "$file"; done; fi # DOTFILES_LOADER'
 
 if ! grep -qF "DOTFILES_LOADER" ~/.bashrc 2>/dev/null; then
+    # WHY sed: some cloud images ship a ~/.bashrc with no trailing newline.
+    # Without this, our loader gets appended to the last line, breaking both.
+    sed -i '$a\' ~/.bashrc
     echo ""                                              >> ~/.bashrc
     echo "# Load .bashrc.d modules (added by dotfiles)" >> ~/.bashrc
     echo "$BASHRC_D_LOADER"                             >> ~/.bashrc

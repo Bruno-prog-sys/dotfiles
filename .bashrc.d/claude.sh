@@ -14,6 +14,13 @@
 #   → Drop it in this folder and re-run install.sh
 # =============================================================
 
+# Surface install failures — Gemini fix: Codespace creation logs are hidden,
+# this makes failures visible in every shell session until manually resolved.
+if [ -f ~/.claude_install_failed ]; then
+    echo "⚠️  WARNING: Claude Code installation failed during Codespace setup."
+    echo "   Run: bash <(curl -fsSL https://claude.ai/install.sh) to fix manually."
+fi
+
 # Ensure Claude Code binary is discoverable
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
