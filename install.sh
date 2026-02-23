@@ -13,14 +13,18 @@
 # =============================================================
 
 set -e  # Exit immediately on any error
-# WHY two traps: the echo trap gives a visible message in creation logs,
-# the file trap surfaces the failure in every future shell session via claude.sh
-trap 'echo ""; echo "❌ ERROR: install.sh failed on line $LINENO. Your Cloud Office is incomplete!"; echo "FAILED" > ~/.claude_install_failed' ERR
+# WHY || true on file write: if disk is full, the write fails but we still want
+# the script to exit cleanly with code 1 rather than getting stuck.
+trap 'echo ""; echo "❌ ERROR: install.sh failed on line $LINENO. Your Cloud Office is incomplete!"; echo "FAILED" > ~/.claude_install_failed || true; exit 1' ERR
 
 echo ""
 echo "============================================"
 echo " Bruno's Cloud Office — Dotfiles Setup"
 echo "============================================"
+
+# WHY rm -f at the top: clears any previous failed-install marker so a successful
+# re-run of install.sh automatically silences the shell warning in claude.sh.
+rm -f ~/.claude_install_failed
 
 # --- 1. Install Claude Code (native binary) ---
 echo ""
